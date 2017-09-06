@@ -1,0 +1,27 @@
+version: 1
+
+############################################################################
+
+jobs:
+   build:
+      docker:
+         - image: ubuntu:16.04
+      working_directory: ~/zm-selenium
+      steps:
+        - checkout
+        - run:
+            name: Preparing OS
+            command: .circleci/prepare-box.sh
+        - run:
+            name: Checkout other repos
+            command: .circleci/checkout-repo.sh
+        - run:
+            name: Compile zm-mailbox
+            working_directory: ~/zm-mailbox
+            command: ant publish-local-all -Dzimbra.buildinfo.version=8.7.6_GA
+        - run:
+            name: Run Tests
+            working_directory: ~/zm-selenium
+            command: ant Run-ExecuteHarnessMain -Dpattern ajax.tests
+
+############################################################################
